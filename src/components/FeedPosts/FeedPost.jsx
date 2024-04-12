@@ -5,8 +5,8 @@ import PostFooter from "./PostFooter";
 
 const FeedPost = ({ postData }) => {
   return (
-    <Link to={`/postpage?id=${postData.id}`}>
-      <Flex direction="column">
+    <Flex direction="column">
+      <Link to={`/postpage?id=${postData.id}`}>
         <Box>
           <Image
             src={postData.imageURL}
@@ -15,10 +15,11 @@ const FeedPost = ({ postData }) => {
             borderRadius="3px"
           />
         </Box>
-        <PostFooter postData={postData} />
-      </Flex>
-    </Link>
+      </Link>
+      <PostFooter postData={postData} />
+    </Flex>
   );
 };
 
 export default FeedPost;
+

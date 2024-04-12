@@ -1,15 +1,12 @@
 import React from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { NotificationsLogo, UnlikeLogo } from "../../assets/constants";
+import useLikePost from "../../hooks/useLikePost";
 
 const PostFooter = ({ postData }) => {
-  const [liked, setLiked] = React.useState(false);
-  const [likes, setLikes] = React.useState(33);
+ const {handleLikePost,isLiked,likes}= useLikePost(postData);
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikes(liked ? likes - 1 : likes + 1);
-  };
+  
 
   return (
     <>
@@ -19,10 +16,10 @@ const PostFooter = ({ postData }) => {
         
         {/* Like button next to the price */}
         <button
-          onClick={handleLike}
+          onClick={handleLikePost}
           style={{ cursor: "pointer", fontSize: "10px" }}
         >
-          {!liked ? <NotificationsLogo /> : <UnlikeLogo />}
+          {!isLiked ? <NotificationsLogo /> : <UnlikeLogo />}
         </button>
       </Flex>
       <Text fontWeight={600} fontSize="sm">
