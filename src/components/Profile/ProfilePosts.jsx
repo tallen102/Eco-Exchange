@@ -61,7 +61,7 @@ const ProfilePosts = ({ userProfilePosts }) => {
                 <Box>
                   <ProfilePost img={post.imageURL} id={post.id} />
                 </Box>
-                <PostFooter postData={post} />
+                 <PostFooter postData={post} /> 
               </Flex>
             </>
           ))

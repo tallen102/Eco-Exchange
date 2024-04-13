@@ -211,11 +211,11 @@ const CreatePost = () => {
               onChange={(e) => setCondition(e.target.value)}
               mt={4}
             >
-              <option value="option1">Brand new</option> {/*unused with original packaging or tags */}
-              <option value="option2">Like new</option> {/*mint condition pre-owned or new without tags*/}
-              <option value="option3">Used - Excellent</option> {/*Lightly used  but no noticeable flaws */}
-              <option value="option3">Used - Good</option> {/*minor flaws or signs of wear, to be noted in the description */}
-              <option value="option3">Used - Fair</option> {/*obvious flaws or signed of wear, to be noted in the descrption or photos */}
+              <option value="Brand New">Brand new: Unused with original packaging or tags  </option> {/*unused with original packaging or tags */}
+              <option value="Like New">Like new: mint condition pre-owned or new without tags</option> {/*mint condition pre-owned or new without tags*/}
+              <option value="Used - Excellent">Used - Excellent: Lightly used  but no noticeable flaws </option> {/*Lightly used  but no noticeable flaws */}
+              <option value="Used - Good">Used - Good: Minor flaws or signs of wear, to be noted in the description </option> {/*minor flaws or signs of wear, to be noted in the description */}
+              <option value="Used - Fait">Used - Fair: Obvious flaws or signed of wear, to be noted in the descrption or photos </option> {/*obvious flaws or signed of wear, to be noted in the descrption or photos */}
             </Select>
             <Input
               placeholder="Price"

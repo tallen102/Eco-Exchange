@@ -1,40 +1,34 @@
 import React from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
-import { NotificationsLogo, UnlikeLogo } from "../../assets/constants";
-import useLikePost from "../../hooks/useLikePost";
 
 const PostFooter = ({ postData }) => {
- const {handleLikePost,isLiked,likes}= useLikePost(postData);
-
-  
-
   return (
-    <>
-      <Flex alignItems="center" gap={24} w="full" pt={1} mb={0} mt="auto">
-        {/* Price displayed first */}
-        <Text>{"$" + postData.price}</Text>
-        
-        {/* Like button next to the price */}
-        <button
-          onClick={handleLikePost}
-          style={{ cursor: "pointer", fontSize: "10px" }}
+    <Box width="182.5px">
+      {/* Title Flex */}
+      <Flex alignItems="center" gap={2} > 
+        <Text
+          fontSize="sm"
+          fontWeight={600}
+          isTruncated   
+          maxWidth="100%"  
+          overflow="hidden"  
+          whiteSpace="nowrap"  // Keeps the text on a single line
+          textOverflow="ellipsis"  // Adds ellipsis at the end if text is too long
         >
-          {!isLiked ? <NotificationsLogo /> : <UnlikeLogo />}
-        </button>
-      </Flex>
-      <Text fontWeight={600} fontSize="sm">
-        {likes} likes
-      </Text>
-      <Flex alignItems="center" gap={2} mt={0}>
-        <Text fontSize="sm" fontWeight={700}>
           {postData.title}
-          <Text as="span" fontWeight={400}>
-            2 hours ago
-          </Text>
         </Text>
+    
       </Flex>
-    </>
+
+      {/* Price Flex */}
+      <Flex alignItems="center" gap={24} w="full" mt={0}>
+        <Text>{"$" + postData.price}</Text>
+      </Flex>
+    </Box>
   );
 };
 
 export default PostFooter;
+
+
+

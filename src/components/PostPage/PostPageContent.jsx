@@ -10,11 +10,13 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useSearchParams } from "react-router-dom";
-
+import { timeAgo } from "../../utils/timeAgo";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-
+import { useEffect } from "react";
+import { onSnapshot } from "firebase/firestore";
 import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import React from "react";
 import { auth, firestore } from "../../firebase/firebase";
@@ -27,6 +29,20 @@ const PostPageContent = ({ posts }) => {
   const [searchParams] = useSearchParams();
   const storage = getStorage();
 
+  const [postStatus, setPostStatus] = useState("available");
+  const id = searchParams.get("id");
+
+  useEffect(() => {
+    const postDocRef = doc(firestore, "posts", id);
+    const unsubscribe = onSnapshot(postDocRef, (doc) => {
+      const data = doc.data();
+      if (data) {
+        setPostStatus(data.status);
+      }
+    });
+    return () => unsubscribe(); // Cleanup subscription on component unmount
+  }, [id]); 
+
   const { isLoading, userProfile } = useGetUserProfileById(posts.createdBy);
 
   const [authUser] = useAuthState(auth);
@@ -34,7 +50,7 @@ const PostPageContent = ({ posts }) => {
 
   const showToast = useShowToast();
 
-  const id = searchParams.get("id");
+  
   const deleteSpecificDoc = async () => {
     const postDocRef = doc(firestore, "posts", id);
     await deleteSpecificImageURL();
@@ -85,6 +101,17 @@ const PostPageContent = ({ posts }) => {
     const folderNames = decodeURIComponent(imageUrl);
     return folderNames;
   }
+  const handleStatusChange = async (newStatus) => {
+    setPostStatus(newStatus);
+    const postDocRef = doc(firestore, "posts", id);
+    try {
+        await updateDoc(postDocRef, { status: newStatus });
+        showToast("Success", "Post status updated successfully", "success");
+    } catch (error) {  // This part was missing
+        console.error("Error updating post status:", error);
+        showToast("Error", "Failed to update post status", "error");
+    }
+};
 
   return (
     <Container maxW="container.lg">
@@ -125,6 +152,8 @@ const PostPageContent = ({ posts }) => {
           <Text fontSize={{ base: 12, md: 14, lg: 16 }}>
             {posts?.condition}{" "}
           </Text>{" "}
+          
+          {/* category */}
           <Text px={{ base: 1, md: 1, lg: 1.5 }}> &#x2022;</Text>
           {/* category */}
           <Text fontSize={{ base: 12, md: 14, lg: 16 }}>
@@ -134,19 +163,49 @@ const PostPageContent = ({ posts }) => {
           <Text px={{ base: 1, md: 1, lg: 1.5 }}> &#x2022;</Text>
           {/* title */}
           <Text fontSize={{ base: 12, md: 14, lg: 16 }}>{posts?.username}</Text>
+          <Text px={{ base: 1, md: 1, lg: 1.5 }}> &#x2022;</Text>
+          <Text fontSize={{ base: 12, md: 14, lg: 16 }}>
+            {" "}
+            {timeAgo(posts?.createdAt)}
+          </Text>
         </Flex>
         <Button
-          borderRadius={0}
-          w={"full"}
-          colorScheme="blue"
-          size={"sm"}
-          fontSize={14}
+        borderRadius={0}
+         w={"full"}
+        colorScheme={postStatus === 'sold' ? "red" : "blue"}
+        size={"sm"}
+        fontSize={14}
+        disabled={postStatus === 'sold'} // Disable button if the post is sold
         >
-          Buy now{" "}
-        </Button>
+  {postStatus === 'sold' ? "Sold" : "Buy now"}
+</Button>
+
+        {/* Status change dropdown */}
+        {posts.createdBy === authUser.uid && (
+          <div style={{ marginTop: '10px' }}>
+            <span>Status:</span>
+            <select
+              value={postStatus}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              style={{
+                backgroundColor: postStatus === 'available' ? 'green' : 'red',
+                color: 'white',
+                fontWeight: 'bold',
+                borderRadius: '4px',
+                padding: '5px',
+              }}
+            >
+              <option value="available">Available</option>
+              <option value="sold">Sold</option>
+            </select>
+          </div>
+        )}
         <Center height="50px">
           <Divider orientation="horizontal" />
         </Center>{" "}
+           
+
+
         <Link to={`/${posts.createdBy}`} style={{ width: "100%" }}>
           <Stack direction="row" alignItems="center" mb={4}>
             <Avatar
@@ -183,22 +242,4 @@ const PostPageContent = ({ posts }) => {
 };
 
 export default PostPageContent;
-{
-  /* <Container maxW="container.lg" py={10}>
-      <Box border="1px solid" p={4} mb={4}>
-        <Box>
-          <Heading as="h1" size="lg">Red Purse</Heading>
-          <Text fontSize="25" fontWeight="bold">29.99</Text> 
-          <Text fontSize="xs">Tax included</Text>
-        </Box>
-         Attributes
-        <Box>
-          <Text>Used - Good</Text>
-          <Text>Category Name</Text>
-        </Box>
-        <Box>
-          <Button variant="solid">Make an Offer</Button>
-        </Box>
-      </Box>
-    </Container> */
-}
+

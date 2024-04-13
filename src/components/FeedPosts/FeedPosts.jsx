@@ -1,7 +1,7 @@
 import { Container, SimpleGrid, Box, Skeleton } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import FeedPost from "./FeedPost";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { firestore } from "../../firebase/firebase";
 import useShowToast from "../../hooks/useShowToast";
 
@@ -11,23 +11,25 @@ const FeedPosts = () => {
 
   const [posts, setPosts] = useState([]);
 
-  const fetchPosts = async () => {
-    try {
-      const postCollection = collection(firestore, "posts");
-      const querySnapshot = await getDocs(postCollection);
-      const postsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setPosts(postsData);
-    } catch (error) {
-      showToast("Error", error.message, "error");
-
-      console.error("Error fetching posts: ", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+ 
+const fetchPosts = async () => {
+  try {
+    const postCollection = collection(firestore, "posts");
+    // Create a query that orders posts by 'createdAt' field in descending order
+    const postsQuery = query(postCollection, orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(postsQuery);
+    const postsData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setPosts(postsData);
+  } catch (error) {
+    showToast("Error", error.message, "error");
+    console.error("Error fetching posts: ", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchPosts();
