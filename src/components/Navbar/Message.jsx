@@ -30,10 +30,10 @@ const Message = ({messageCount}) => {
                     <Badge
                         colorScheme="red"
                         borderRadius="full"
-                        position="absolute" // Position the badge absolutely
-                        top="-1" // Adjust top and right as needed
+                        position="absolute" 
+                        top="-1" 
                         right="0"
-                        border="2px solid white" // Optional: adds contrast
+                        border="2px solid white" 
                     >
                         {messageCount}
                     </Badge>
