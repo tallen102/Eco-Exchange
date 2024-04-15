@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { Flex, Box, Spinner, useBreakpointValue } from '@chakra-ui/react';
+import { Flex, Box, Spinner } from '@chakra-ui/react';
 import Navbar from '../../components/Navbar/Navbar';
 import { auth } from '../../firebase/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -16,8 +16,8 @@ const PageLayout = ({ children }) => {
 
   if (checkingUserIsAuth) return <PageLayoutSpinner />;
 
-
-  const navbarHeight = useBreakpointValue({ base: "70px", md: "100px" });
+  // Define the height of the Navbar for consistent positioning of Menubar
+  const navbarHeight = { base: "70px", md: "100px" };
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -36,7 +36,7 @@ const PageLayout = ({ children }) => {
       {canRenderMenubar && (
         <Box
           position="sticky"
-          top={navbarHeight}  // Dynamically set based on the actual Navbar height
+          top={navbarHeight.base}  
           zIndex={9}  
         >
           <Menubar />
