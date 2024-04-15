@@ -24,7 +24,7 @@ const ContactPage = () => {
       setEmail('');
       setSubject('');
       setMessage('');
-    } catch ( error ) {
+    } catch (error) {
       toast({
         title: 'Failed to send message. Please try again later.',
         description: error.message,
@@ -37,53 +37,32 @@ const ContactPage = () => {
   };
 
   return (
-    <Box bg="maroon" color="white" p={10} minHeight="50vh">
+    <Box bg="maroon" color="white" p={10} minHeight="100vh" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
       <VStack spacing={8} align="center" mb={6}>
         <Heading as="h1" size="xl">Contact us</Heading>
         <Text>We’re here to help and answer any questions you might have. We look forward to hearing from you!</Text>
       </VStack>
-      <Flex direction={['column-reverse', 'column-reverse', 'row']} justifyContent="space-between" alignItems="start">
+      <Flex direction={['column', 'column', 'row']} justifyContent="center" alignItems="center" gap={6}>
         <Box boxSize="md">
           <Image src="hello.webp" alt="Say Hello" />
         </Box>
-        <Box as="form" onSubmit={sendEmail} bg="white" color="black" p={6} borderRadius="md" width="md">
+        <Box as="form" onSubmit={sendEmail} bg="white" color="black" p={6} borderRadius="md" width={["90%", "80%", "md"]}>
           <VStack spacing={4} align="stretch">
             <FormControl isRequired>
               <FormLabel htmlFor="name">Your Name</FormLabel>
-              <Input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor="email">Your Email</FormLabel>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor="subject">Subject</FormLabel>
-              <Input
-                id="subject"
-                type="text"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-              />
+              <Input id="subject" type="text" value={subject} onChange={(e) => setSubject(e.target.value)} />
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor="message">Your Message</FormLabel>
-              <Textarea
-                id="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                height="140px"
-                resize="none"
-              />
+              <Textarea id="message" value={message} onChange={(e) => setMessage(e.target.value)} height="140px" resize="none" />
             </FormControl>
             <Button type="submit" colorScheme="red" size="lg">
               Send Message
@@ -96,4 +75,5 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
+
 

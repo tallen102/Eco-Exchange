@@ -20,16 +20,17 @@ const Menubar = () => {
 
   const handleCategoryClick = (categoryValue) => {
     setSelectedCategory(categoryValue);
-    getPostDetails(categoryValue, );
+    getPostDetails(categoryValue);
   };
 
   return (
     <>
-      <Box display="flex" alignItems="start">
+      <Box display="flex" alignItems="start" bg="white">  {/* Set the background color here */}
         {categories.map((category) => (
           <Box 
             key={category.value} 
             p="2" 
+            borderBottom="1px solid #E2E8F0"  
             _hover={{ bg: 'gray.100', cursor: 'pointer' }}
             onClick={() => handleCategoryClick(category.value)}
           >
@@ -42,8 +43,8 @@ const Menubar = () => {
           index % 25 === 0 ? (
             <FeedPost
               postData={post}
-                key={post.id}
-                id={post.id}
+              key={post.id}
+              id={post.id}
             />
           ) : null
         ))
@@ -53,5 +54,4 @@ const Menubar = () => {
 };
 
 export default Menubar;
-
 

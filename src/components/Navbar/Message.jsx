@@ -25,7 +25,9 @@ const Message = ({messageCount}) => {
                 justifyContent={{ base: "center", md: "flex-start" }}
                 position="relative" 
             >
-                <AiFillMessage size={25} />
+                <AiFillMessage size={25} 
+                
+                />
                 {messageCount > 0 && (
                     <Badge
                         colorScheme="red"
