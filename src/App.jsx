@@ -4,6 +4,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { Provider } from 'react-redux'
+import store from './redux/store'
 import HomePage from "./pages/HomePage/HomePage";
 import AuthPage from "./pages/AuthPage/AuthPage";
 import PageLayout from "./Layouts/PageLayout/PageLayout";
@@ -20,6 +22,7 @@ function App() {
   console.log(authUser)
   
   return (
+    <Provider store={store}>
     <Router>
       <ResetStateOnURLChange />
       <PageLayout>
@@ -40,6 +43,7 @@ function App() {
         </Routes>
       </PageLayout>
     </Router>
+    </Provider>
   );
 }
 
