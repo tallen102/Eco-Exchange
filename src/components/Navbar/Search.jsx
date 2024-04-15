@@ -27,7 +27,7 @@ const Search = () => {
 
   return (
     <Flex as="form" onSubmit={handleSubmit} alignItems="center">
-      <InputGroup>
+      <InputGroup width="100%">  
         <InputLeftElement pointerEvents="none">
           <Icon as={SearchIcon} color="gray.300" />
         </InputLeftElement>
@@ -37,6 +37,8 @@ const Search = () => {
           value={searchTerm}
           onChange={handleChange}
           onKeyPress={handleKeyPress}
+          width="100%"  
+          maxWidth="600px"  
         />
       </InputGroup>
     </Flex>

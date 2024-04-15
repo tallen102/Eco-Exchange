@@ -13,6 +13,7 @@ import Chat from './pages/ChatPage/Chat';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebase";
 import ResetStateOnURLChange from "./hooks/useResetState";
+import ContactPage from "./pages/ContactPage/ContactPage";
 
 function App() {
   const [authUser] = useAuthState(auth);
@@ -34,6 +35,7 @@ function App() {
           <Route path="/:userId" element={<ProfilePage />} />
           <Route path="/postpage" element={<PostPage />} />{" "}
           <Route path="/chat/:id" element={<Chat />} />
+          <Route path="/contact" element={<ContactPage />} />
           
         </Routes>
       </PageLayout>

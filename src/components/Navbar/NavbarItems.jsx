@@ -9,6 +9,7 @@ import Wishlist from './Wishlist';
 const NavbarItems = () => {
     return (
         <>
+           
             <Search />{/* Center */}
             <Box position="absolute" right="4" display="flex" alignItems="center"> {/* Positioned to the far right */}
                 <CreatePost />
@@ -16,6 +17,7 @@ const NavbarItems = () => {
                 <Message />
                 <ProfileLink /> 
             </Box>
+           
         </>
     );
 }

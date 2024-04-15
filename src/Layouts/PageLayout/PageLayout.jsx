@@ -9,18 +9,23 @@ import Menubar from '../../components/Filter/Menubar';
 const PageLayout = ({ children }) => {
   const { pathname } = useLocation();
   const [user, loading] = useAuthState(auth);
-  const canRenderNavbar = pathname !== "/auth" && user; 
-  const canRenderMenubar = pathname !== "/auth" && user;
+  const canRenderNavbar = pathname !== "/auth" && user;
+  const canRenderMenubar = pathname !== "/auth" && pathname !== "/contact" && user;
 
   const checkingUserIsAuth = !user && loading;
-  
+
   if(checkingUserIsAuth) return <PageLayoutSpinner />;
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
       {/* Navbar */}
       {canRenderNavbar && (
-        <Box h={{ base: "70px", md: "240px" }}>
+        <Box 
+          position="sticky"
+          top={0}
+          zIndex={10}
+          h={{ base: "70px", md: "100px" }}
+        >
           <Navbar />
         </Box>
       )}
@@ -31,7 +36,7 @@ const PageLayout = ({ children }) => {
         </Box>
       )}
       {/* Main content */}
-      <Box flex={1} w="100%">
+      <Box flex={1} w="full">
         {children}
       </Box>
     </Flex>
