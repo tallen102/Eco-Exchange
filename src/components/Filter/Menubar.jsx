@@ -32,7 +32,7 @@ const Menubar = () => {
 
   return (
     <>
-      <Box display="flex" alignItems="start">
+      <Box display="flex" alignItems="start" bg={'white'} >
         {categories.map((category) => (
           <Link to={'/?category='+category.name}  onClick={() => handleCategoryClick(category.value)}>
           <Box 

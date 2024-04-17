@@ -20,7 +20,7 @@ import {
   Input
 } from "@chakra-ui/react";
 import { InputGroup, InputLeftAddon } from "@chakra-ui/react";
-import { Image } from "@chakra-ui/react";
+import { Image, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useSearchParams } from "react-router-dom";
@@ -40,42 +40,15 @@ import useUserProfileStore from "../../store/userProfileStore";
 const PostPageContent = ({ posts, img }) => {
   const [searchParams] = useSearchParams();
   const storage = getStorage();
-
+  const [postDetails, setPostDetails] = useState([])
   const [postStatus, setPostStatus] = useState("available");
-  const [inputOffer, setInputOffer] = useState('');  // Added this line
+  const [inputOffer, setInputOffer] = useState('');  
   const id = searchParams.get("id");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [offer, setOffer] = useState('');
   const initialRef = useRef();
 
-  const [discountOptions, setDiscountOptions] = useState([
-    { label: '20% Off', discount: 0.2 },
-    { label: '15% Off', discount: 0.15 },
-    { label: '10% Off', discount: 0.1 }
-  ]);
-
-;
-
-  useEffect(() => {
-    // Function to calculate the discount options based on the current price
-    const calculateDiscounts = () => {
-      return discountOptions.map((option) => {
-        const discountAmount = posts.price * option.discount;
-        const finalPrice = posts.price - discountAmount;
-        return {
-          ...option,
-          label: `${option.label} - $${discountAmount.toFixed(2)} off`,
-          finalPrice: `$${finalPrice.toFixed(2)}`, // This is the final price after discount
-        };
-      });
-    };
   
-    // Set the discount options with the pre-calculated discounted prices
-    if (posts.price) {
-      setDiscountOptions(calculateDiscounts());
-    }
-  }, [posts.price, discountOptions]);
-
   useEffect(() => {
     const postDocRef = doc(firestore, "posts", id);
     const unsubscribe = onSnapshot(postDocRef, (doc) => {
@@ -158,6 +131,26 @@ const PostPageContent = ({ posts, img }) => {
     }
 };
 
+const sendOfferToChat = async () => {
+  const chatDocRef = doc(firestore, "chats", `${authUser.uid}_${posts.createdBy}`); // Example path
+  try {
+    await updateDoc(chatDocRef, {
+      messages: arrayUnion({
+        text: `Offer: $${inputOffer}`,
+        from: authUser.uid,
+        to: posts.createdBy,
+        timestamp: serverTimestamp()
+      })
+    });
+    showToast("Success", "Offer sent successfully", "success");
+    onClose(); // Close the modal after sending the offer
+  } catch (error) {
+    console.error("Error sending offer to chat:", error);
+    showToast("Error", "Failed to send offer", "error");
+  }
+};
+
+
   return (
     <Container maxW="container.lg">
       {}{" "}
@@ -189,10 +182,9 @@ const PostPageContent = ({ posts, img }) => {
           <Text as="h4" fontWeight="bold">
             {"$ " + posts.price}
           </Text>
+          
         </Box>
         <Flex my={4}>
-          <Text fontSize={{ base: 12, md: 12, lg: 16 }}>Size L </Text>
-          <Text px={{ base: 1, md: 1, lg: 1.5 }}> &#x2022;</Text>
           {/* Condition */}
           <Text fontSize={{ base: 12, md: 14, lg: 16 }}>
             {posts?.condition}{" "}
@@ -206,14 +198,13 @@ const PostPageContent = ({ posts, img }) => {
             {posts?.category}
           </Text>
           <Text px={{ base: 1, md: 1, lg: 1.5 }}> &#x2022;</Text>
-          {/* title */}
-          <Text fontSize={{ base: 12, md: 14, lg: 16 }}>{posts?.username}</Text>
-          <Text px={{ base: 1, md: 1, lg: 1.5 }}> &#x2022;</Text>
           <Text fontSize={{ base: 12, md: 14, lg: 16 }}>
             {" "}
             {timeAgo(posts?.createdAt)}
           </Text>
+          
         </Flex>
+        
         <Button
   borderRadius={0}
   w={"full"}
@@ -221,65 +212,116 @@ const PostPageContent = ({ posts, img }) => {
   size={"sm"}
   fontSize={14}
   disabled={postStatus === 'sold'}
-  onClick={onOpen} // Attach the modal to this button
+  onClick={onOpen} 
 >
   {postStatus === 'sold' ? "Sold" : "Make offer "}
 </Button>
 
 <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={initialRef} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Make an offer</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <Center>
-              <Image
-                borderRadius="md"
-                boxSize="100px"
-                src={img} // Replace with your actual image URL
-                alt="Product"
-                mb={4}
-              />
-            </Center>
-            <Text mb={0}>Enter your offer:</Text>
-            <InputGroup>
-              <InputLeftAddon children="US$" />
-              <Input
-                ref={initialRef}
-                placeholder="Enter your offer"
-                value={inputOffer}
-                onChange={(e) => setInputOffer(e.target.value)}
-                type="number"
-                mb={3}
-              />
-            </InputGroup>
-            <Flex justify="space-between">
-            {discountOptions.map((option) => (
-  <Box key={option.label} textAlign="center" m={1}>
-    <Button size="sm">{option.label}</Button>
-    <Text>{option.finalPrice}</Text>
-  </Box>
-))}
-              
+  <ModalOverlay />
+  <ModalContent>
+    <ModalHeader>Make an offer</ModalHeader>
+    <ModalCloseButton />
+    <ModalBody pb={6}>
+      <Center>
+        <Image
+          borderRadius="md"
+          boxSize="100px"
+          src={postDetails.imageURL} // not fetching img 
+          alt="Product"
+          mb={4}
+        />
+      </Center>
+      <Text mb={0}>Enter your offer:</Text>
+      <InputGroup>
+        <InputLeftAddon children="US$" />
+        <Input
+          ref={initialRef}
+          placeholder=""
+          value={inputOffer}
+          onChange={(e) => setInputOffer(e.target.value)}
+          type="number"
+          mb={3}
+        />
+      </InputGroup>
+      <VStack spacing={4}>
+    <Flex justify="space-between">
+        <Button 
+            colorScheme="white" 
+            borderColor="black"
+            borderWidth="1px"
+            variant="outline"
+            size="lg"
+            width="full"
+            height="20"
+            mr={2}
+            onClick={() => handleOfferChange(posts.price * 0.9)}
+            _hover={{ bg: "gray.100", borderColor: "gray.500" }} // Define hover styles here
+        >
+            <VStack spacing={1}>
+                <Text fontSize="sm">10% Off</Text>
+                <Text fontSize="lg">${(posts.price * 0.9).toFixed(2)}</Text>
+            </VStack>
+        </Button>
+        <Button 
+            bg="#d4edda" 
+            borderColor="green.500"
+            borderWidth="1px"
+            variant="solid"
+            size="lg"
+            width="full"
+            height="20"
+            mx={2}
+            onClick={() => handleOfferChange(posts.price * 0.8)}
+            _hover={{ bg: "green.100", borderColor: "green.600" }} // Define hover styles here
+        >
+            <VStack spacing={1}>
+                <Text fontSize="sm">20% Off</Text>
+                <Text fontSize="lg">${(posts.price * 0.8).toFixed(2)}</Text>
+            </VStack>
+        </Button>
+        <Button 
+            colorScheme="white" 
+            borderColor="black"
+            borderWidth="1px"
+            variant="outline"
+            size="lg"
+            width="full"
+            height="20"
+            ml={2}
+            onClick={() => handleOfferChange(posts.price * 0.7)}
+            _hover={{ bg: "gray.100", borderColor: "gray.500" }} // Define hover styles here
+        >
+            <VStack spacing={1}>
+                <Text fontSize="sm">30% Off</Text>
+                <Text fontSize="lg">${(posts.price * 0.7).toFixed(2)}</Text>
+            </VStack>
+        </Button>
+    </Flex>
+    <Box textAlign="center" width="full">
+        <Text fontSize="xs" color="gray.500">Recommended</Text>
+    </Box>
+</VStack>
 
-            </Flex>
-            <Text fontSize="sm" color="gray.500" mt={2}>
-              
-            </Text>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} w="full" onClick={onClose}>
-              Send offer
-            </Button>
-          </ModalFooter>
-          <Box p={4}>
-            <Text fontSize="xs" textAlign="center" color="gray.500">
-              An offer is not a purchase. If the seller accepts, you'll have 24 hours to buy the item at your offer price.
-            </Text>
-          </Box>
-        </ModalContent>
-      </Modal>
 
+
+      <Text fontSize="sm" color="gray.500" mt={2}>
+        
+      </Text>
+    </ModalBody>
+    <ModalFooter>
+    <Button colorScheme="blue" mr={3} w="full" onClick={sendOfferToChat}>
+    Send offer
+      </Button>
+  </ModalFooter>
+
+    <Box p={4}>
+      <Text fontSize="xs" textAlign="center" color="gray.500">
+        An offer is not a purchase. If the seller accepts, you'll have 24 hours to buy the item at your offer price.
+      </Text>
+    </Box>
+  </ModalContent>
+</Modal>
 
         {/* Status change dropdown */}
         {posts.createdBy === authUser.uid && (
