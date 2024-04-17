@@ -129,7 +129,7 @@ const PostPageContent = ({ posts }) => {
                 mr={2}
               />
 
-              <EditIcon cursor={"pointer"} w={5} h={5} />
+              
             </Stack>
           )}
 

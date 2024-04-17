@@ -144,11 +144,11 @@ const CreatePost = () => {
 
   return (
     <>
-      <Button onClick={onOpen}>Create Post</Button>
+      <Button onClick={onOpen}>Sell now</Button>
       <Modal isOpen={isOpen} onClose={onClose} size={"xl"}>
         <ModalOverlay />
         <ModalContent border={"1px solid gray"}>
-          <ModalHeader>Create Post</ModalHeader>
+          <ModalHeader>Create a listing</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <Textarea

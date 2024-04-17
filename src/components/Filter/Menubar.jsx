@@ -8,10 +8,10 @@ import { setProduct } from '../../redux/reducers/product';
 import { Link } from 'react-router-dom';
 const categories = [
   { name: "Dorm & Living", value: "Dorm and Living" },
-  { name: "Electronics", value: "electronics" },
+  { name: "Electronics", value: "Electronics" },
   { name: "Clothing, Shoes, & Accessories", value: "Clothing and Accessories" },
-  { name: "Bags & Luggage", value: "bagsLuggage" },
-  { name: "Books & Study Materials", value: "booksStudyMaterials" },
+  { name: "Bags & Luggage", value: "Bags & Luggage" },
+  { name: "Books & Study Materials", value: "Books & Study Materials" },
   { name: "Outdoor & Sports", value: "outdoorSports" },
 ];
 

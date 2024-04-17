@@ -55,7 +55,7 @@ const ProfileHeader = () => {
           {visitingOwnProfileAndAuth && (
             <Flex gap={4} alignItems={"center"} justifyContent={"center"}>
               <Button
-                bg={"white"}
+                bg={"gray.200"}
                 color={"black"}
                 _hover={{ bg: "whiteAlpha.800" }}
                 size={{ base: "xs", md: "sm" }}
