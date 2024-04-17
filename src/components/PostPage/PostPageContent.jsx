@@ -9,13 +9,24 @@ import {
   Heading,
   Stack,
   Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Input
 } from "@chakra-ui/react";
+import { InputGroup, InputLeftAddon } from "@chakra-ui/react";
+import { Image } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useSearchParams } from "react-router-dom";
 import { timeAgo } from "../../utils/timeAgo";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { onSnapshot } from "firebase/firestore";
 import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import React from "react";
@@ -25,12 +36,45 @@ import useShowToast from "../../hooks/useShowToast";
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import useUserProfileStore from "../../store/userProfileStore";
 
-const PostPageContent = ({ posts }) => {
+
+const PostPageContent = ({ posts, img }) => {
   const [searchParams] = useSearchParams();
   const storage = getStorage();
 
   const [postStatus, setPostStatus] = useState("available");
+  const [inputOffer, setInputOffer] = useState('');  // Added this line
   const id = searchParams.get("id");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [offer, setOffer] = useState('');
+  const initialRef = useRef();
+
+  const [discountOptions, setDiscountOptions] = useState([
+    { label: '20% Off', discount: 0.2 },
+    { label: '15% Off', discount: 0.15 },
+    { label: '10% Off', discount: 0.1 }
+  ]);
+
+;
+
+  useEffect(() => {
+    // Function to calculate the discount options based on the current price
+    const calculateDiscounts = () => {
+      return discountOptions.map((option) => {
+        const discountAmount = posts.price * option.discount;
+        const finalPrice = posts.price - discountAmount;
+        return {
+          ...option,
+          label: `${option.label} - $${discountAmount.toFixed(2)} off`,
+          finalPrice: `$${finalPrice.toFixed(2)}`, // This is the final price after discount
+        };
+      });
+    };
+  
+    // Set the discount options with the pre-calculated discounted prices
+    if (posts.price) {
+      setDiscountOptions(calculateDiscounts());
+    }
+  }, [posts.price, discountOptions]);
 
   useEffect(() => {
     const postDocRef = doc(firestore, "posts", id);
@@ -42,6 +86,7 @@ const PostPageContent = ({ posts }) => {
     });
     return () => unsubscribe(); // Cleanup subscription on component unmount
   }, [id]); 
+
 
   const { isLoading, userProfile } = useGetUserProfileById(posts.createdBy);
 
@@ -170,15 +215,71 @@ const PostPageContent = ({ posts }) => {
           </Text>
         </Flex>
         <Button
-        borderRadius={0}
-         w={"full"}
-        colorScheme={postStatus === 'sold' ? "red" : "blue"}
-        size={"sm"}
-        fontSize={14}
-        disabled={postStatus === 'sold'} // Disable button if the post is sold
-        >
-  {postStatus === 'sold' ? "Sold" : "Buy now"}
+  borderRadius={0}
+  w={"full"}
+  colorScheme={postStatus === 'sold' ? "red" : "blue"}
+  size={"sm"}
+  fontSize={14}
+  disabled={postStatus === 'sold'}
+  onClick={onOpen} // Attach the modal to this button
+>
+  {postStatus === 'sold' ? "Sold" : "Make offer "}
 </Button>
+
+<Modal isOpen={isOpen} onClose={onClose} initialFocusRef={initialRef} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Make an offer</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <Center>
+              <Image
+                borderRadius="md"
+                boxSize="100px"
+                src={img} // Replace with your actual image URL
+                alt="Product"
+                mb={4}
+              />
+            </Center>
+            <Text mb={0}>Enter your offer:</Text>
+            <InputGroup>
+              <InputLeftAddon children="US$" />
+              <Input
+                ref={initialRef}
+                placeholder="Enter your offer"
+                value={inputOffer}
+                onChange={(e) => setInputOffer(e.target.value)}
+                type="number"
+                mb={3}
+              />
+            </InputGroup>
+            <Flex justify="space-between">
+            {discountOptions.map((option) => (
+  <Box key={option.label} textAlign="center" m={1}>
+    <Button size="sm">{option.label}</Button>
+    <Text>{option.finalPrice}</Text>
+  </Box>
+))}
+              
+
+            </Flex>
+            <Text fontSize="sm" color="gray.500" mt={2}>
+              
+            </Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} w="full" onClick={onClose}>
+              Send offer
+            </Button>
+          </ModalFooter>
+          <Box p={4}>
+            <Text fontSize="xs" textAlign="center" color="gray.500">
+              An offer is not a purchase. If the seller accepts, you'll have 24 hours to buy the item at your offer price.
+            </Text>
+          </Box>
+        </ModalContent>
+      </Modal>
+
 
         {/* Status change dropdown */}
         {posts.createdBy === authUser.uid && (

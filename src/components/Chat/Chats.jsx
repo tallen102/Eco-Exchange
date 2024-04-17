@@ -1,117 +1,111 @@
-import { Box, Stack, Avatar, Text, Flex } from '@chakra-ui/react';
-import { doc, onSnapshot } from "firebase/firestore";
+import { Box, Stack, Avatar, Text, Flex, IconButton, Menu, MenuButton, MenuList, MenuItem, Icon, MenuDivider } from '@chakra-ui/react';
+import { HamburgerIcon } from '@chakra-ui/icons'; // Assuming HamburgerIcon is used as placeholder
+import { doc, onSnapshot, deleteDoc } from "firebase/firestore";  // Added deleteDoc here
 import React, { useContext, useEffect, useState } from "react";
 
 import { auth, firestore } from "../../firebase/firebase";
-import { useParams } from 'react-router-dom';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ChatContext } from "../../context/ChatContext";
-
+import { MoreIcon } from '../../assets/constants';
 
 const Chats = () => {
   const [chats, setChats] = useState([]);
-
   const [authUser] = useAuthState(auth);
-  const { data,dispatch } = useContext(ChatContext);
+  const { data, dispatch } = useContext(ChatContext);
 
-  
   useEffect(() => {
-    const getChats = () => {
-      const unsub = onSnapshot(doc(firestore, "userChats", authUser.uid), (doc) => {
-        setChats(doc.data());
-      });
+    if (!authUser.uid) return;
 
-      return () => {
-        unsub();
-      };
-    };
+    const unsub = onSnapshot(doc(firestore, "userChats", authUser.uid), (doc) => {
+      setChats(doc.data());
+    });
 
-    authUser.uid && getChats();
+    return unsub;
   }, [authUser.uid]);
 
   useEffect(() => {
     if (data.chatId === "null" && chats) {
- 
       const latestChat = Object.entries(chats)
-        .sort(([_, chatA], [__, chatB]) => chatB.date - chatA.date)
-        .find(([key, value]) => key !== "null");
-      
+        .sort(([_, a], [__, b]) => b.date - a.date)
+        .find(([key]) => key !== "null");
+
       if (latestChat) {
         handleSelect(latestChat[1]?.userInfo);
       }
     }
   }, [chats, data.chatId]);
 
-  const handleSelect = (u) => {
-    dispatch({ type: "CHANGE_USER", payload: u });
+  const handleSelect = (userInfo) => {
+    dispatch({ type: "CHANGE_USER", payload: userInfo });
   };
 
-  // console.log(chats)
-  function formatDate(timestamp) {
-    if (!timestamp) return ''; // Return empty string if timestamp is not provided
-  
-    const currentDate = new Date(); // Today's date
-    const yesterdayDate = new Date(currentDate); // Yesterday's date
-    yesterdayDate.setDate(currentDate.getDate() - 1);
-    
+  const handleDelete = async (chatId) => {
+    if (!chatId) return;
+
+    try {
+      const chatDoc = doc(firestore, "userChats", authUser.uid, "chats", chatId);
+      await deleteDoc(chatDoc);
+
+      setChats(prevChats => {
+        const updatedChats = { ...prevChats };
+        delete updatedChats[chatId];
+        return updatedChats;
+      });
+    } catch (error) {
+      console.error("Error deleting chat: ", error);
+    }
+  };
+
+  const formatDate = (timestamp) => {
+    if (!timestamp) return '';
     const messageDate = new Date(timestamp);
-  
-    if (messageDate.toDateString() === currentDate.toDateString()) {
+    const today = new Date();
+    const yesterday = new Date(today.setDate(today.getDate() - 1));
+
+    if (messageDate.toDateString() === new Date().toDateString()) {
       return "Today";
-    } else if (messageDate.toDateString() === yesterdayDate.toDateString()) {
+    } else if (messageDate.toDateString() === yesterday.toDateString()) {
       return "Yesterday";
     } else {
       return `${messageDate.getDate()}/${messageDate.getMonth() + 1}`;
     }
-  }
+  };
   
-
   return (
-   <>
-   {chats && Object.entries(chats)?.sort((a,b)=>b[1].date - a[1].date).map((chat) => (
-    <Box
-      w="340px"
-      h="88px"
-      //boxShadow="md"
-      borderRadius="0"
-      _hover={{ bg: 'gray.50' }}
-      //border="1px solid white"
-      overflow="hidden"
-      key={chat[0]}
-      onClick={() => handleSelect(chat[1]?.userInfo)}
-    >
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-        h="100%"
-        p={2}
-      >
-        <Avatar
-          size="md"
-          name={chat[1].userInfo?.displayName}
-          src={chat[1].userInfo?.photoURL}
-          mr={2}
-        />
-        <Stack flex={1} spacing={0}> {/* No spacing between Stack items */}
-          <Text fontWeight="bold" isTruncated>
-          {chat[1].userInfo?.displayName}
-          </Text>
-          <Text fontSize="xs" isTruncated>{chat[1].userInfo?.username}</Text>
-          <Flex alignItems="center" wrap="nowrap">
-            <Text fontSize="xs" color="gray.500" isTruncated>{formatDate(chat[1]?.date?.toDate())}</Text>
-            <Text mx={0.5}>·</Text> {/* Even smaller margin for the dot */}
-            <Text fontSize="xs" isTruncated>
-            {chat[1].lastMessage?.text}
-            </Text>
+    <>
+      {Object.entries(chats ?? {}).sort((a, b) => b[1].date - a[1].date).map(([key, chat]) => (
+        <Box
+          key={key}
+          w="340px"
+          h="88px"
+          _hover={{ bg: 'gray.50' }}
+          overflow="hidden"
+          onClick={() => handleSelect(chat.userInfo)}
+        >
+          <Flex alignItems="center" justifyContent="space-between" h="100%" p={2}>
+            <Avatar size="md" name={chat.userInfo?.displayName} src={chat.userInfo?.photoURL} mr={2} />
+            <Stack flex={1} spacing={0}>
+              <Text fontWeight="bold" isTruncated>{chat.userInfo?.displayName}</Text>
+              <Text fontSize="xs" isTruncated>{chat.userInfo?.username}</Text>
+              <Flex alignItems="center" wrap="nowrap">
+                <Text fontSize="xs" color="gray.500" isTruncated>{formatDate(chat.date?.toDate())}</Text>
+                <Text mx={0.5}>·</Text>
+                <Text fontSize="xs" isTruncated>{chat.lastMessage?.text}</Text>
+              </Flex>
+            </Stack>
+            <Menu>
+              <MenuButton as={IconButton} aria-label="Options" icon={<Icon as={MoreIcon} />} variant="ghost" size="sm" />
+              <MenuList>
+                <MenuItem onClick={() => handleDelete(key)}>Delete</MenuItem>
+                <MenuDivider />
+                <MenuItem>Option 2</MenuItem>
+              </MenuList>
+            </Menu>
           </Flex>
-        </Stack>
-      </Flex>
-    </Box>
-       ))}
+        </Box>
+      ))}
     </>
   );
 };
 
 export default Chats;
-
-
