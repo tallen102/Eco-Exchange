@@ -12,7 +12,7 @@ const categories = [
   { name: "Clothing, Shoes, & Accessories", value: "Clothing and Accessories" },
   { name: "Bags & Luggage", value: "Bags & Luggage" },
   { name: "Books & Study Materials", value: "Books & Study Materials" },
-  { name: "Outdoor & Sports", value: "outdoorSports" },
+  { name: "Outdoor & Sports", value: "Outdoor & Sports" },
 ];
 
 const Menubar = () => {
