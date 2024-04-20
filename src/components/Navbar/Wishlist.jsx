@@ -1,12 +1,12 @@
 import React from 'react';
 import { Box, Flex, Tooltip } from '@chakra-ui/react';
-import { NotificationsLogo } from "../../assets/constants";
+import { FiHeart } from "react-icons/fi"; // Importing FiHeart
 
 const Wishlist = () => {
     return (
         <Tooltip
             hasArrow
-            label={"Notifications"}
+            label={"Add to favorites"} // Updated label to match the icon purpose
             placement='right'
             ml={1}
             openDelay={500}
@@ -21,9 +21,7 @@ const Wishlist = () => {
                 //w={{ base: 10, md: "full" }}
                 justifyContent={{ base: "center", md: "flex-start" }}
             >
-                
-                    <NotificationsLogo color="black" />
-                
+                <FiHeart color="black" size="24px" />
                 <Box display={{ base: "none", md: "block" }}></Box>
             </Flex>
         </Tooltip>

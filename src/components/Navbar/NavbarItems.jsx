@@ -1,14 +1,13 @@
-import React,{useEffect,useContext, useState, useRef} from 'react';
+import React,{useEffect, useState, useRef} from 'react';
 import { Box } from '@chakra-ui/react';
 import CreatePost from './CreatePost';
 import Message from './Message';
 import ProfileLink from './ProfileLink';
 import Search from './Search';
 import Wishlist from './Wishlist';
-import { collection, doc, onSnapshot } from "firebase/firestore";
+import {doc, onSnapshot } from "firebase/firestore";
 import { auth, firestore } from "../../firebase/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { ChatContext } from '../../context/ChatContext';
 import {useLocation} from 'react-router-dom'
 
 const NavbarItems = () => {

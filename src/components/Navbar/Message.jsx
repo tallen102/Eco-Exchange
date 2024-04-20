@@ -1,5 +1,5 @@
 import { Box, Link, Tooltip, Badge, Avatar } from "@chakra-ui/react";
-import { AiFillMessage } from "react-icons/ai";
+import { CiMail } from "react-icons/ci";
 import { Link as RouterLink } from "react-router-dom";
 
 const Message = ({messageCount}) => {
@@ -25,7 +25,7 @@ const Message = ({messageCount}) => {
                 justifyContent={{ base: "center", md: "flex-start" }}
                 position="relative" 
             >
-                <AiFillMessage size={25} 
+                <CiMail size={25} 
                 
                 />
                 {messageCount > 0 && (
