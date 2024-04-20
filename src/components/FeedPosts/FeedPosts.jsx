@@ -23,7 +23,11 @@ const FeedPosts = () => {
       const postsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
+      })).filter(product => product.status !== 'sold');
+      // const postsData = querySnapshot.docs.map((doc) => ({
+      //   id: doc.id,
+      //   ...doc.data(),
+      // }));
       dispatch(setProduct(postsData));
     } catch (error) {
       showToast("Error", error.message, "error");

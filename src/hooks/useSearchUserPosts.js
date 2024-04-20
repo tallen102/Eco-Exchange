@@ -16,17 +16,18 @@ const useSearchUsersPosts = () => {
 
             // Add conditions for category and condition if provided
             if (category) {
-                q = query(q, where('category', '==', category));
+				q = query(q, where('category', '==', category));
             }
             if (condition) {
                 q = query(q, where('condition', '==', condition));
             }
 
-			
+			//filter items that are already sold 
 			const querySnapshot = await getDocs(q);
 
 			const postsData = [];
 			querySnapshot.forEach((doc) => {
+				if(doc.data().status !== 'sold')
 				postsData.push({ ...doc.data(), id: doc.id });
 			});
 

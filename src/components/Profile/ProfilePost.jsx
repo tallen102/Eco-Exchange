@@ -1,7 +1,7 @@
 import { GridItem, Flex, Image } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
-const ProfilePost = ({ img, id }) => {
+const ProfilePost = ({ img, id ,status=""}) => {
   return (
     <Link to={"/postpage" + "?id=" + id}>
       <GridItem
@@ -33,6 +33,24 @@ const ProfilePost = ({ img, id }) => {
           h={"100%"}
           objectFit={"cover"}
         />
+        {status === 'sold' && (
+          <Flex
+            position={"absolute"}
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            zIndex={2}
+            justifyContent={"center"}
+            alignItems={"center"}
+            fontSize={"lg"}
+            color={"yellow.500"}
+            bg={"blackAlpha.300"}
+            fontWeight={"bold"}
+          >
+            SOLD
+          </Flex>
+        )}
         {/*<PostPageImg img={img} />*/}
       </GridItem>
     </Link>

@@ -69,7 +69,7 @@ const categorySubcategoryMap = {
       Women: ["5", "6", "7", "8", "9", "10"],
       WomenTypes: ["Sneakers", "Boots", "Sandals", "Flats", "Heels"]
     },
-    "Bags and Luggage": {
+    "Bags & Luggage": {
       Backpacks: [""],
       Handbags: [""],
       Luggage: ["Small", "Medium", "Large"]

@@ -10,9 +10,12 @@ const categories = [
   { name: "Dorm & Living", value: "Dorm and Living" },
   { name: "Electronics", value: "Electronics" },
   { name: "Clothing, Shoes, & Accessories", value: "Clothing and Accessories" },
-  { name: "Bags & Luggage", value: "Bags & Luggage" },
-  { name: "Books & Study Materials", value: "Books & Study Materials" },
-  { name: "Outdoor & Sports", value: "Outdoor & Sports" },
+  { name: "Bags & Luggage", value: "Bags and Luggage" },
+  { name: "Books & Study Materials", value: "Book and Study Materials" },
+  { name: "Outdoor & Sports", value: "Outdoor and Sports" },
+//  { name: "Women", value: "Women" },
+ // { name: "Shoes", value: "Shoes" },
+  //{ name: "Jewelry", value: "Jewelry" },
 ];
 
 const Menubar = () => {
@@ -32,7 +35,7 @@ const Menubar = () => {
 
   return (
     <>
-      <Box display="flex" alignItems="start" bg={'white'} >
+      <Box display="flex" alignItems="start">
         {categories.map((category) => (
           <Link to={'/?category='+category.name}  onClick={() => handleCategoryClick(category.value)}>
           <Box 
@@ -62,6 +65,4 @@ const Menubar = () => {
 };
 
 export default Menubar;
-
-
 

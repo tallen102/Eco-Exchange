@@ -59,20 +59,14 @@ const ProfilePosts = ({ userProfilePosts }) => {
             <>
               <Flex direction="column">
                 <Box>
-                  <ProfilePost img={post.imageURL} id={post.id} />
+                  <ProfilePost img={post.imageURL} id={post.id} status={post.status || ""}/>
                 </Box>
                  <PostFooter postData={post} /> 
               </Flex>
             </>
           ))
 
-        // <>
-        //   <ProfilePost img="/img2.jpeg" />
-        //   <ProfilePost img="/img3.jpeg" />
-        //   <ProfilePost img="/img1.jpeg" />
-        //   <ProfilePost img="/img5.jpeg" />
-        //   <ProfilePost img="/img5.jpeg" />
-        // </>
+      
       }
     </Grid>
   );
