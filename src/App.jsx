@@ -29,11 +29,11 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={authUser ? <HomePage /> : <Navigate to="/auth" />}
+            element={authUser && authUser.emailVerified  ? <HomePage /> : <Navigate to="/auth" />}
           />
           <Route
             path="/auth"
-            element={!authUser ? <AuthPage /> : <Navigate to="/" />}
+            element={!authUser || !authUser.emailVerified ? <AuthPage /> : <Navigate to="/" />}
           />
           <Route path="/:userId" element={<ProfilePage />} />
           <Route path="/postpage" element={<PostPage />} />{" "}
