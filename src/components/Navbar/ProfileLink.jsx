@@ -47,7 +47,9 @@ const ProfileLink = () => {
         <MenuItem as={RouterLink} to="/contact">
           Contact Us
         </MenuItem>
-          <MenuItem>Privacy Policy</MenuItem>
+        <MenuItem as={RouterLink} to="/privacy-policy">
+            Privacy Policy
+</MenuItem>
           <MenuDivider />
         </MenuGroup>
         <MenuItem

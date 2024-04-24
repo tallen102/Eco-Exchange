@@ -16,7 +16,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase/firebase";
 import ResetStateOnURLChange from "./hooks/useResetState";
 import ContactPage from "./pages/ContactPage/ContactPage";
-
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage/PrivacyPolicyPage";
 function App() {
   const [authUser] = useAuthState(auth);
   console.log(authUser)
@@ -39,7 +39,7 @@ function App() {
           <Route path="/postpage" element={<PostPage />} />{" "}
           <Route path="/chat/:id" element={<Chat />} />
           <Route path="/contact" element={<ContactPage />} />
-          
+          <Route path = "privacy-policy" element={<PrivacyPolicyPage />} />
         </Routes>
       </PageLayout>
     </Router>
