@@ -15,6 +15,30 @@ const useSignUpWithEmailAndPassword = () => {
 			return;
 		}
 
+		if(!/[0-9]/.test(inputs.password))
+		{
+			showToast("Error", "Please include a number", "error");
+			return;
+		}
+
+		if(!/[A-Z]/.test(inputs.password))
+		{
+			showToast("Error", "Please include a Capital letter", "error");
+			return;
+		}
+
+		if(!/[a-z]/.test(inputs.password))
+		{
+			showToast("Error", "Please include a lower letter", "error");
+			return;
+		}
+
+		if(!(inputs.password.length >= 8) || !(inputs.password.length <= 16))
+        {
+			showToast("Error", "Please put over 8 to under 12 charactors", "error");
+			return;
+		}
+
 		const usersRef = collection(firestore, "users");
 
 		const q = query(usersRef, where("username", "==", inputs.username));
