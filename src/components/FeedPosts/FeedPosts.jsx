@@ -1,19 +1,22 @@
 import { Container, SimpleGrid, Box, Skeleton } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import {useLocation} from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import FeedPost from "./FeedPost";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { firestore } from "../../firebase/firebase";
 import useShowToast from "../../hooks/useShowToast";
-import {useDispatch , useSelector} from 'react-redux';
-import { setProduct } from "../../redux/reducers/product";
+import { useDispatch, useSelector } from 'react-redux';
+import { setProduct, setAllProduct } from "../../redux/reducers/product";
+import useSearchStore from "../../store/searchStore";
 
 const FeedPosts = () => {
   const [isLoading, setIsLoading] = React.useState(true);
   const showToast = useShowToast();
   const dispatch = useDispatch();
   const products = useSelector((state) => state.product.products);
+  const allProducts = useSelector((state) => state.product.allProducts);
   const { search } = useLocation();
+  const { searchTerm, setSearchTerm } = useSearchStore();
   const fetchPosts = async () => {
     try {
       const postCollection = collection(firestore, "posts");
@@ -29,6 +32,7 @@ const FeedPosts = () => {
       //   ...doc.data(),
       // }));
       dispatch(setProduct(postsData));
+      dispatch(setAllProduct(postsData));
     } catch (error) {
       showToast("Error", error.message, "error");
       console.error("Error fetching posts: ", error);
@@ -36,9 +40,20 @@ const FeedPosts = () => {
       setIsLoading(false);
     }
   };
+  console.log(allProducts);
+  useEffect(() => {
+    if (searchTerm?.trim()?.length > 0) {
+      const newProducts = allProducts?.filter((prod) => {
+        return prod?.title.toLowerCase().includes(searchTerm.toLowerCase())
+      });
+      dispatch(setProduct(newProducts));
+    } else {
+      dispatch(setProduct(allProducts));
+    }
+  }, [searchTerm])
 
   useEffect(() => {
-    if(search.includes('category')){
+    if (search.includes('category')) {
       setIsLoading(false)
       return
     };

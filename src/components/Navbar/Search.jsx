@@ -7,9 +7,11 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
+import useSearchStore from "../../store/searchStore";
 
 const Search = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
+  const { searchTerm, setSearchTerm } = useSearchStore();
 
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
