@@ -83,17 +83,17 @@ const Chat = () => {
  
   },[id])
   return (
-    <Container maxW='container.xlg' p={0} h="1273px" centerContent>
-      <Flex w="full" h="full" flexDirection="column"> 
+    <Container maxW='container.xlg' p={0} h="100vh" centerContent overflow="hidden">
+      <Flex w="full" h="full" flexDirection="column">
         <Topbar w="full" />
-        <Flex flex={1} w="full" flexDirection="row"> {/* Adjusted Flex container for main content */}
-          <Flex flex={1} w="full"> {/* Sidebar container */}
+        <Flex flex={1} w="full" flexDirection="row">
+          <Flex flex={1} w="full">
             <Sidebar />
           </Flex>
-          <Flex flex={3} w="full"> {/* Chatbox container */}
+          <Flex flex={3} w="full">
             <Chatbox />
           </Flex>
-          <Flex flex={2} w="full"> {/* Item info container */}
+          <Flex flex={2} w="full">
             <Iteminfo />
           </Flex>
         </Flex>

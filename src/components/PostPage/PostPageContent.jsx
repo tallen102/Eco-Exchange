@@ -54,6 +54,7 @@ const PostPageContent = ({ posts, img }) => {
     const unsubscribe = onSnapshot(postDocRef, (doc) => {
       const data = doc.data();
       if (data) {
+        setPostDetails(data)
         setPostStatus(data.status);
       }
     });
@@ -131,17 +132,21 @@ const PostPageContent = ({ posts, img }) => {
     }
 };
 
+
+
+
 const sendOfferToChat = async () => {
-  const chatDocRef = doc(firestore, "chats", `${authUser.uid}_${posts.createdBy}`); // Example path
+  let myTimeStamp = new Date();
+  const chatDocRef = doc(firestore, "chats", `${authUser.uid}${posts.createdBy}`); // Example path
   try {
-    await updateDoc(chatDocRef, {
+    await setDoc(chatDocRef, {
       messages: arrayUnion({
-        text: `Offer: $${inputOffer}`,
+        text: `Offer: ${inputOffer}`,
         from: authUser.uid,
         to: posts.createdBy,
-        timestamp: serverTimestamp()
+        timestamp: myTimeStamp
       })
-    });
+    }, { merge: true });
     showToast("Success", "Offer sent successfully", "success");
     onClose(); // Close the modal after sending the offer
   } catch (error) {
@@ -218,110 +223,110 @@ const sendOfferToChat = async () => {
 </Button>
 
 <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={initialRef} isCentered>
-  <ModalOverlay />
-  <ModalContent>
-    <ModalHeader>Make an offer</ModalHeader>
-    <ModalCloseButton />
-    <ModalBody pb={6}>
-      <Center>
-        <Image
-          borderRadius="md"
-          boxSize="100px"
-          src={postDetails.imageURL} // not fetching img 
-          alt="Product"
-          mb={4}
-        />
-      </Center>
-      <Text mb={0}>Enter your offer:</Text>
-      <InputGroup>
-        <InputLeftAddon children="US$" />
-        <Input
-          ref={initialRef}
-          placeholder=""
-          value={inputOffer}
-          onChange={(e) => setInputOffer(e.target.value)}
-          type="number"
-          mb={3}
-        />
-      </InputGroup>
-      <VStack spacing={4}>
-    <Flex justify="space-between">
-        <Button 
-            colorScheme="white" 
-            borderColor="black"
-            borderWidth="1px"
-            variant="outline"
-            size="lg"
-            width="full"
-            height="20"
-            mr={2}
-            onClick={() => handleOfferChange(posts.price * 0.9)}
-            _hover={{ bg: "gray.100", borderColor: "gray.500" }} // Define hover styles here
-        >
-            <VStack spacing={1}>
-                <Text fontSize="sm">10% Off</Text>
-                <Text fontSize="lg">${(posts.price * 0.9).toFixed(2)}</Text>
-            </VStack>
-        </Button>
-        <Button 
-            bg="#d4edda" 
-            borderColor="green.500"
-            borderWidth="1px"
-            variant="solid"
-            size="lg"
-            width="full"
-            height="20"
-            mx={2}
-            onClick={() => handleOfferChange(posts.price * 0.8)}
-            _hover={{ bg: "green.100", borderColor: "green.600" }} // Define hover styles here
-        >
-            <VStack spacing={1}>
-                <Text fontSize="sm">20% Off</Text>
-                <Text fontSize="lg">${(posts.price * 0.8).toFixed(2)}</Text>
-            </VStack>
-        </Button>
-        <Button 
-            colorScheme="white" 
-            borderColor="black"
-            borderWidth="1px"
-            variant="outline"
-            size="lg"
-            width="full"
-            height="20"
-            ml={2}
-            onClick={() => handleOfferChange(posts.price * 0.7)}
-            _hover={{ bg: "gray.100", borderColor: "gray.500" }} // Define hover styles here
-        >
-            <VStack spacing={1}>
-                <Text fontSize="sm">30% Off</Text>
-                <Text fontSize="lg">${(posts.price * 0.7).toFixed(2)}</Text>
-            </VStack>
-        </Button>
-    </Flex>
-    <Box textAlign="center" width="full">
-        <Text fontSize="xs" color="gray.500">Recommended</Text>
-    </Box>
-</VStack>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Make an offer</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <Center>
+                <Image
+                  borderRadius="md"
+                  boxSize="100px"
+                  src={postDetails.imageURL} // not fetching img 
+                  alt="Product"
+                  mb={4}
+                />
+              </Center>
+              <Text mb={0}>Enter your offer:</Text>
+              <InputGroup>
+                <InputLeftAddon children="US$" />
+                <Input
+                  ref={initialRef}
+                  placeholder=""
+                  value={inputOffer}
+                  onChange={(e) => setInputOffer(e.target.value)}
+                  type="number"
+                  mb={3}
+                />
+              </InputGroup>
+              <VStack spacing={4}>
+                <Flex justify="space-between">
+                  <Button
+                    colorScheme="white"
+                    borderColor="black"
+                    borderWidth="1px"
+                    variant="outline"
+                    size="lg"
+                    width="full"
+                    height="20"
+                    mr={2}
+                    onClick={() => handleOfferChange(posts.price * 0.9)}
+                    _hover={{ bg: "gray.100", borderColor: "gray.500" }} // Define hover styles here
+                  >
+                    <VStack spacing={1}>
+                      <Text fontSize="sm">10% Off</Text>
+                      <Text fontSize="lg">${(posts.price * 0.9).toFixed(2)}</Text>
+                    </VStack>
+                  </Button>
+                  <Button
+                    bg="#d4edda"
+                    borderColor="green.500"
+                    borderWidth="1px"
+                    variant="solid"
+                    size="lg"
+                    width="full"
+                    height="20"
+                    mx={2}
+                    onClick={() => handleOfferChange(posts.price * 0.8)}
+                    _hover={{ bg: "green.100", borderColor: "green.600" }} // Define hover styles here
+                  >
+                    <VStack spacing={1}>
+                      <Text fontSize="sm">20% Off</Text>
+                      <Text fontSize="lg">${(posts.price * 0.8).toFixed(2)}</Text>
+                    </VStack>
+                  </Button>
+                  <Button
+                    colorScheme="white"
+                    borderColor="black"
+                    borderWidth="1px"
+                    variant="outline"
+                    size="lg"
+                    width="full"
+                    height="20"
+                    ml={2}
+                    onClick={() => handleOfferChange(posts.price * 0.7)}
+                    _hover={{ bg: "gray.100", borderColor: "gray.500" }} // Define hover styles here
+                  >
+                    <VStack spacing={1}>
+                      <Text fontSize="sm">30% Off</Text>
+                      <Text fontSize="lg">${(posts.price * 0.7).toFixed(2)}</Text>
+                    </VStack>
+                  </Button>
+                </Flex>
+                <Box textAlign="center" width="full">
+                  <Text fontSize="xs" color="gray.500">Recommended</Text>
+                </Box>
+              </VStack>
 
 
 
-      <Text fontSize="sm" color="gray.500" mt={2}>
-        
-      </Text>
-    </ModalBody>
-    <ModalFooter>
-    <Button colorScheme="blue" mr={3} w="full" onClick={sendOfferToChat}>
-    Send offer
-      </Button>
-  </ModalFooter>
+              <Text fontSize="sm" color="gray.500" mt={2}>
 
-    <Box p={4}>
-      <Text fontSize="xs" textAlign="center" color="gray.500">
-        An offer is not a purchase. If the seller accepts, you'll have 24 hours to buy the item at your offer price.
-      </Text>
-    </Box>
-  </ModalContent>
-</Modal>
+              </Text>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} w="full" onClick={sendOfferToChat}>
+                Send offer
+              </Button>
+            </ModalFooter>
+
+            <Box p={4}>
+              <Text fontSize="xs" textAlign="center" color="gray.500">
+                An offer is not a purchase. If the seller accepts, you'll have 24 hours to buy the item at your offer price.
+              </Text>
+            </Box>
+          </ModalContent>
+        </Modal>
 
         {/* Status change dropdown */}
         {posts.createdBy === authUser.uid && (

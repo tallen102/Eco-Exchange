@@ -10,7 +10,7 @@ const PageLayout = ({ children }) => {
   const { pathname } = useLocation();
   const [user, loading] = useAuthState(auth);
   const canRenderNavbar = pathname !== "/auth" && user;
-  const canRenderMenubar = pathname !== "/auth" && pathname !== "/contact" && user;
+  const canRenderMenubar = pathname !== "/auth" && pathname !== "/contact" && !pathname.startsWith("/chat") && user;
 
   const checkingUserIsAuth = !user && loading;
 
