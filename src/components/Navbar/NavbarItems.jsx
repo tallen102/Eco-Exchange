@@ -23,14 +23,13 @@ const NavbarItems = () => {
             setCount(0)
           }
           const unsub = onSnapshot(
-            doc(firestore, "userChats", authUser.uid), (doc) => {
-            if(loaded.current==false){
-               return loaded.current=true
-            }
+            doc(firestore, "users", authUser.uid), (doc) => {
             if(pathname=='/chat/messages'){
                 setCount(0)
             }else{
-                setCount(prev=>prev+1)
+              const Offers = doc.data()?.offers
+              setCount(Offers?Offers.length:0)
+                
             }
           });
     

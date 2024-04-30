@@ -16,6 +16,7 @@ const Message = ({ message }) => {
   const bg = message.senderId === authUser.uid ? 'blue.100' : 'gray.200';
   const alignSelf = message.senderId === authUser.uid ? 'flex-end' : 'flex-start';
   const formatDate = (timestamp) => {
+    if (!timestamp) return;
     const dateObj = new Date(timestamp.seconds * 1000); // Convert seconds to milliseconds
 
     // Format hours

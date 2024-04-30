@@ -28,7 +28,19 @@ import { timeAgo } from "../../utils/timeAgo";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { useEffect, useRef } from "react";
 import { onSnapshot } from "firebase/firestore";
-import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  deleteDoc,
+  doc,
+  updateDoc,
+  setDoc,
+  arrayUnion,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+} from "firebase/firestore";
 import React from "react";
 import { auth, firestore } from "../../firebase/firebase";
 import useGetUserProfileById from "../../hooks/useGetUserProfileById";
@@ -68,7 +80,6 @@ const PostPageContent = ({ posts, img }) => {
   const deletePost = useUserProfileStore((state) => state.deletePost);
 
   const showToast = useShowToast();
-
   
   const deleteSpecificDoc = async () => {
     const postDocRef = doc(firestore, "posts", id);
@@ -132,22 +143,71 @@ const PostPageContent = ({ posts, img }) => {
     }
 };
 
+const handleOfferChange = (offer) => {
+  setInputOffer(offer);
+};
 
+
+const addOfferToChat = async () => {
+  // Get document references from the users collection
+  const senderDocRef = doc(firestore, "users", authUser.uid);
+  const receiverDocRef = doc(firestore, "users", posts.createdBy);
+  let myTimeStamp = new Date();
+
+  // Execute both getDoc calls in parallel
+  const [receiverDoc] = await Promise.all([getDoc(receiverDocRef)]);
+  // Prepare the offers data
+  const senderOffer = {
+    chatId: `${authUser.uid}${posts.createdBy}`,
+    postId: id,
+    date: myTimeStamp,
+    toId: posts.createdBy,
+    photoURL: receiverDoc.data().profilePicURL,
+    displayName: receiverDoc.data().fullName,
+    uid:`${authUser.uid}${posts.createdBy}`
+
+  };
+  const receiverOffer = {
+    chatId: `${authUser.uid}${posts.createdBy}`,
+    postId: id,
+    date: myTimeStamp,
+    fromId: authUser.uid,
+    photoURL: authUser.photoURL,
+    displayName: authUser.displayName,
+    uid: `${authUser.uid}${posts.createdBy}`,
+  };
+
+  // Update both documents in parallel
+  await Promise.all([
+    updateDoc(senderDocRef, {
+      offers: arrayUnion(senderOffer),
+    }),
+    updateDoc(receiverDocRef, {
+      offers: arrayUnion(receiverOffer),
+    }),
+  ]);
+}
 
 
 const sendOfferToChat = async () => {
+  if (!inputOffer) {
+    return showToast("Error", "Please enter an offer", "error");
+  }
+
+  
   let myTimeStamp = new Date();
   const chatDocRef = doc(firestore, "chats", `${authUser.uid}${posts.createdBy}`); // Example path
   try {
     await setDoc(chatDocRef, {
       messages: arrayUnion({
-        text: `Offer: ${inputOffer}`,
+        text: ` I would like to offer $${inputOffer} for your ${posts.title} `,
         from: authUser.uid,
         to: posts.createdBy,
         timestamp: myTimeStamp
       })
     }, { merge: true });
     showToast("Success", "Offer sent successfully", "success");
+    await addOfferToChat();
     onClose(); // Close the modal after sending the offer
   } catch (error) {
     console.error("Error sending offer to chat:", error);

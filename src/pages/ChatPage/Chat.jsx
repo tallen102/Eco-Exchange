@@ -3,10 +3,11 @@ import Chatbox from '../../components/Chat/Chatbox';
 import Topbar from '../../components/Chat/Topbar';
 import Iteminfo from '../../components/Chat/Iteminfo';
 import Sidebar from '../../components/Chat/Sidebar';
-import React,{useEffect} from "react";
+import React, { useEffect, useContext } from "react";
 import { auth, firestore } from "../../firebase/firebase";
 import { useParams,useSearchParams } from 'react-router-dom';
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useState } from "react";
 
 import {
   setDoc,
@@ -15,6 +16,8 @@ import {
   serverTimestamp,
   getDoc,
 } from "firebase/firestore";
+import { ChatContext } from "../../context/ChatContext";
+
 
 
 const Chat = () => {
@@ -22,7 +25,8 @@ const Chat = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const postId = searchParams.get("post");
-
+ const { data, dispatch } = useContext(ChatContext);
+ const [directChatUser, setDirectChatUser] = useState();
  
 
   useEffect(()=>{
@@ -31,7 +35,7 @@ const Chat = () => {
       const docRef = doc(firestore, "users", id);
       const docSnap = await getDoc(docRef);
       const user= docSnap.data()
-      console.log(user)
+   
 
       const currentUserRef = doc(firestore, "users", authUser.uid);
       const currentUserSnap = await getDoc(currentUserRef);
@@ -40,10 +44,16 @@ const Chat = () => {
       const combinedId = authUser.uid > user.uid
         ? authUser.uid + user.uid + postId
         : user.uid + authUser.uid + postId;
-
+        // console.log('combinedId',combinedId)
+        console.log('user',user)
+           setDirectChatUser({
+             ...user,
+             chatId: combinedId,
+           });
       try {
         const res = await getDoc(doc(firestore, "chats", combinedId));
-        
+    
+        dispatch({ type: "SET_CHAT_ID", payload: combinedId });
   
         if (!res.exists()) {
           //create a chat in chats collection
@@ -83,12 +93,18 @@ const Chat = () => {
  
   },[id])
   return (
-    <Container maxW='container.xlg' p={0} h="100vh" centerContent overflow="hidden">
+    <Container
+      maxW="container.xlg"
+      p={0}
+      h="100vh"
+      centerContent
+      overflow="hidden"
+    >
       <Flex w="full" h="full" flexDirection="column">
         <Topbar w="full" />
         <Flex flex={1} w="full" flexDirection="row">
           <Flex flex={1} w="full">
-            <Sidebar />
+            <Sidebar directChatUser={directChatUser} />
           </Flex>
           <Flex flex={3} w="full">
             <Chatbox />
@@ -99,7 +115,7 @@ const Chat = () => {
         </Flex>
       </Flex>
     </Container>
-  )
+  );
 }
 
 export default Chat;

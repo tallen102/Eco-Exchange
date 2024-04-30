@@ -25,9 +25,10 @@ import {
           return {
             ...state,
             user: action.payload,
-            chatId: authUser.uid > action.payload.uid
-              ? authUser.uid + action.payload.uid + action.payload.postId
-              : action.payload.uid + authUser.uid + action.payload.postId,
+            // chatId: authUser.uid > action.payload.uid
+            //   ? authUser.uid + action.payload.uid + action.payload.postId
+            //   : action.payload.uid + authUser.uid + action.payload.postId,
+            chatId: action.payload.chatId,
             users: {
               ...state.users,
               [action.payload.uid]: {
@@ -50,6 +51,11 @@ import {
           };
         case "RESET_STATE":
           return INITIAL_STATE;
+        case "SET_CHAT_ID":
+          return {
+            ...state,
+            chatId: action.payload,
+          };
         default:
           return state;
       }

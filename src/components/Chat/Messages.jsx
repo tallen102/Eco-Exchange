@@ -12,14 +12,15 @@ const Messages = () => {
   const [messages, setMessages] = useState([]);
   const { data } = useContext(ChatContext);
 
-  useEffect(() => {
+  useEffect(() => { 
+    if (data.chatId === "null") return;
     const unSub = onSnapshot(doc(firestore, "chats", data.chatId), (doc) => {
       doc.exists() && setMessages(doc.data().messages);
     });
     return () => {
       unSub();
     };
-  }, [data.chatId]);
+  }, [data.chatId, data]);
 
 
   return (

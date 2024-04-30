@@ -5,12 +5,15 @@ import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { auth, firestore } from "../../firebase/firebase";
 import { Button } from '@chakra-ui/react';
 import DetailsModal from './DetailsModal';
+import {useSearchParams} from 'react-router-dom'
 
 const Iteminfo = () => {
   const [authUser] = useAuthState(auth);
   const { data } = useContext(ChatContext);
   const [postDetails, setPostDetails] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const isPost =searchParams.get("post") ? true : false;
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -40,10 +43,13 @@ const Iteminfo = () => {
           fetchPostDetails(entry[1].userInfo.postId);
 
         }
+        else 
+        {
+          fetchPostDetails(data.user.postId);
+        }
 
       }
     });
-
 
     return () => {
       unSub();
@@ -51,24 +57,39 @@ const Iteminfo = () => {
   }, [data.chatId]);
 
   return (
-    <div style={{ maxWidth: '90%', margin: '20px auto', fontWeight: 'bold' }}>
-    {postDetails && (
-      <>
-        <img src={postDetails.imageURL} alt="" />
-        <h3 style={{ fontSize: '18px',marginTop:'20px' }}>{postDetails.title}</h3>
-        {postDetails.price &&
-        <>
-        <h2  style={{ fontSize: '24px' }}>${postDetails.price}</h2>
-        <Button onClick={openModal} marginTop='20px' color="#09a97d" border="1px solid #09a97d" borderRadius={30} bg= "transparent">See Item details</Button>
-        </>
-        }
-        
-        <DetailsModal isOpen={isModalOpen} onClose={closeModal} postDetails={postDetails} />
-      </>
-    )}
-  </div>
-  
-  )
+    <div style={{ maxWidth: "90%", margin: "20px auto", fontWeight: "bold" }}>
+      {postDetails &&
+      (
+          <>
+            <img src={postDetails.imageURL} alt="" />
+            <h3 style={{ fontSize: "18px", marginTop: "20px" }}>
+              {postDetails.title}
+            </h3>
+            {postDetails.price && (
+              <>
+                <h2 style={{ fontSize: "24px" }}>${postDetails.price}</h2>
+                <Button
+                  onClick={openModal}
+                  marginTop="20px"
+                  color="#09a97d"
+                  border="1px solid #09a97d"
+                  borderRadius={30}
+                  bg="transparent"
+                >
+                  See Item details
+                </Button>
+              </>
+            )}
+
+            <DetailsModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              postDetails={postDetails}
+            />
+          </>
+        )}
+    </div>
+  );
 }
 
 export default Iteminfo
