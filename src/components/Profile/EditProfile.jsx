@@ -29,19 +29,7 @@ const EditProfile = ({ isOpen, onClose }) => {
 		username: "",
 		bio: "",
 	});
-	const handleResetPassword = () => {
-		const user = auth.currentUser;
-		const email = user.email;
 
-		auth
-			.sendPasswordResetEmail(email)
-			.then(() => {
-				showToast("Success", "Password reset email sent successfully", "success");
-			})
-			.catch((error) => {
-				showToast("Error", error.message, "error");
-			});
-	};
 	const authUser = useAuthStore((state) => state.user);
 	const fileRef = useRef(null);
 	const { handleImageChange, selectedFile, setSelectedFile } = usePreviewImg();
@@ -56,6 +44,18 @@ const EditProfile = ({ isOpen, onClose }) => {
 		} catch (error) {
 			showToast("Error", error.message, "error");
 		}
+	};
+	const handleResetPassword = () => {
+		const email = auth.currentUser.email;
+
+		auth
+			.sendPasswordResetEmail(email)
+			.then(() => {
+				showToast("Success", "Password reset email sent successfully", "success");
+			})
+			.catch((error) => {
+				showToast("Error", error.message, "error");
+			});
 	};
 
 	return (
@@ -151,7 +151,7 @@ const EditProfile = ({ isOpen, onClose }) => {
 
 									<Button
 										as={Link}
-										to="/ForgotPassword"
+										to="#"
 										bg={"purple.400"}
 										color={"white"}
 										w="full"
@@ -170,5 +170,5 @@ const EditProfile = ({ isOpen, onClose }) => {
 		</>
 	);
 };
-
+console.log(EditProfile);
 export default EditProfile;
