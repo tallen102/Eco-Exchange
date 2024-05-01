@@ -8,14 +8,16 @@ import {
   VStack,
 } from "@chakra-ui/react";
 
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { Link as RouterLink, useLocation, useParams } from "react-router-dom";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import ProfilePosts from "../../components/Profile/ProfilePosts";
 import ProfileTabs from "../../components/Profile/ProfileTabs";
 import useGetUserProfileById from "../../hooks/useGetUserProfileById";
+import LikedPosts from "../../components/Profile/LikedPosts";
 const ProfilePage = () => {
   const { userId } = useParams();
   const { isLoading, userProfile } = useGetUserProfileById(userId);
+  const isLiked = useLocation().search.includes('likes=true');
 
   const userNotFound = !isLoading && !userProfile;
   if (userNotFound) return <UserNotFound />;
@@ -41,8 +43,8 @@ const ProfilePage = () => {
         borderColor={"whiteAlpha.300"}
         direction={"column"}
       >
-        <ProfileTabs />
-        {6 > 0 && <ProfilePosts userProfilePosts={userProfile?.posts} />}
+        <ProfileTabs isLiked={isLiked} />
+        {isLiked ? <LikedPosts userId={userId} /> : <ProfilePosts userProfilePosts={userProfile?.posts} />}
       </Flex>
     </Container>
   );
