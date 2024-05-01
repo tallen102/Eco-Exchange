@@ -15,14 +15,12 @@ import {
 import { HamburgerIcon } from "@chakra-ui/icons"; // Assuming HamburgerIcon is used as placeholder
 import { doc, onSnapshot, deleteDoc } from "firebase/firestore"; // Added deleteDoc here
 import React, { useContext, useEffect, useState } from "react";
-
+import { timeAgo } from '../../utils/timeAgo'; 
 import { auth, firestore } from "../../firebase/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ChatContext } from "../../context/ChatContext";
 import { MoreIcon } from "../../assets/constants";
-import { useNavigate } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 
 const Chats = ({ directChatUser }) => {
   const { id } = useParams();
@@ -37,55 +35,37 @@ const Chats = ({ directChatUser }) => {
     if (!authUser) return;
 
     const unsub = onSnapshot(doc(firestore, "users", authUser.uid), (doc) => {
-      //filter offers that have same chatId
       console.log("Offers: ", doc.data()?.offers);
       const Offers = doc.data()?.offers;
-      Offers?.reduce((acc, offer) => {
+      const offersMap = Offers?.reduce((acc, offer) => {
         acc[offer.chatId] = offer;
         return acc;
       }, {});
-      setChats(
-        //append in the chats
-        (prevChats) => {
-          return {
-            ...prevChats,
-            ...Offers,
-          };
-        }
-      );
+
+      if (offersMap) {
+        setChats((prevChats) => ({
+          ...prevChats,
+          ...offersMap,
+        }));
+      }
     });
 
-    return unsub;
+    return () => unsub();
   }, [authUser]);
 
   useEffect(() => {
-    //append the directChatUser to the chats
     if (directChatUser) {
-      setChats((prevChats) => {
-        return {
-          ...prevChats,
-          [data.chatId]: directChatUser,
-        };
-      });
+      setChats((prevChats) => ({
+        ...prevChats,
+        [data.chatId]: directChatUser,
+      }));
     }
   }, [directChatUser]);
 
-  // useEffect(() => {
-  //   if (data.chatId === "null" && chats) {
-  //     const latestChat = Object.entries(chats)
-  //       .sort(([_, a], [__, b]) => b.date - a.date)
-  //       .find(([key]) => key !== "null");
-
-  //     if (latestChat) {
-  //       // handleSelect(latestChat[1]?.userInfo);
-  //     }
-  //   }
-  // }, [chats, data.chatId]);
-
   const handleSelect = (userInfo) => {
-    //redirect to chat/messages
-    if (isPost && data.chatId !== userInfo.chatId) navigate(`/chat/messages`);
-  
+    if (isPost && data.chatId !== userInfo.chatId) {
+      navigate(`/chat/messages`);
+    }
     dispatch({ type: "CHANGE_USER", payload: userInfo });
   };
 
@@ -101,7 +81,6 @@ const Chats = ({ directChatUser }) => {
         chatId
       );
       await deleteDoc(chatDoc);
-
       setChats((prevChats) => {
         const updatedChats = { ...prevChats };
         delete updatedChats[chatId];
@@ -112,20 +91,14 @@ const Chats = ({ directChatUser }) => {
     }
   };
 
-  const formatDate = (timestamp) => {
-    if (!timestamp) return "";
-    const messageDate = new Date(timestamp);
-    const today = new Date();
-    const yesterday = new Date(today.setDate(today.getDate() - 1));
-
-    if (messageDate.toDateString() === new Date().toDateString()) {
-      return "Today";
-    } else if (messageDate.toDateString() === yesterday.toDateString()) {
-      return "Yesterday";
-    } else {
-      return `${messageDate.getDate()}/${messageDate.getMonth() + 1}`;
+  {/*const formatDate = (timestamp) => {
+    if (!timestamp || typeof timestamp.toDate !== 'function') {
+      console.error('Invalid or missing timestamp', timestamp);
+      return "";
     }
-  };
+    const dateInMilliseconds = timestamp.toDate().getTime();
+    return timeAgo(dateInMilliseconds);
+  }; */}
 
   return (
     <>
@@ -161,7 +134,7 @@ const Chats = ({ directChatUser }) => {
                 </Text>
                 <Flex alignItems="center" wrap="nowrap">
                   <Text fontSize="xs" color="gray.500" isTruncated>
-                    {formatDate(chat.date?.toDate())}
+                    {/*{formatDate(chat.date?.toDate())} */}
                   </Text>
                   <Text mx={0.5}>·</Text>
                   <Text fontSize="xs" isTruncated>
