@@ -71,9 +71,9 @@ const Iteminfo = () => {
                 <Button
                   onClick={openModal}
                   marginTop="20px"
-                  color="#09a97d"
-                  border="1px solid #09a97d"
-                  borderRadius={30}
+                 // color="#09a97d"
+                  border="1px solid "
+                  //borderRadius={30}
                   bg="transparent"
                 >
                   See Item details
