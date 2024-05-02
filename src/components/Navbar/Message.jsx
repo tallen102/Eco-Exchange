@@ -37,7 +37,7 @@ const Message = ({messageCount}) => {
                         right="0"
                         border="2px solid white" 
                     >
-                        {messageCount}
+                       {messageCount} 
                     </Badge>
                 )}
                 <Box display={{ base: "none", md: "block" }}></Box>

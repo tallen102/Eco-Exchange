@@ -152,8 +152,6 @@ const Chats = ({ directChatUser }) => {
                 />
                 <MenuList>
                   <MenuItem onClick={() => handleDelete(key)}>Delete</MenuItem>
-                  <MenuDivider />
-                  <MenuItem>Option 2</MenuItem>
                 </MenuList>
               </Menu>
             </Flex>

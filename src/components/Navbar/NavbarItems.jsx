@@ -44,7 +44,7 @@ const NavbarItems = () => {
             <Search />{/* Center */}
             <Box position="absolute" right="4" display="flex" alignItems="center"> {/* Positioned to the far right */}
                 <CreatePost />
-                <Wishlist />
+                {/*<Wishlist />*/}
                 <Message messageCount={count}/>
                 <ProfileLink /> 
             </Box>

@@ -1,16 +1,9 @@
-import React, { useState } from "react";
-import {
-  Input,
-  Flex,
-  InputGroup,
-  InputLeftElement,
-  Icon,
-} from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
-import useSearchStore from "../../store/searchStore";
+import React from 'react';
+import { Input, Flex, InputGroup, InputLeftElement, Icon } from '@chakra-ui/react';
+import { Search2Icon } from '@chakra-ui/icons';
+import useSearchStore from '../../store/searchStore';
 
 const Search = () => {
-  // const [searchTerm, setSearchTerm] = useState("");
   const { searchTerm, setSearchTerm } = useSearchStore();
 
   const handleChange = (event) => {
@@ -22,25 +15,36 @@ const Search = () => {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleSubmit(event);
     }
   };
 
   return (
-    <Flex as="form" onSubmit={handleSubmit} alignItems="center">
-      <InputGroup width="100%">  
+    <Flex
+      as="form"
+      onSubmit={handleSubmit}
+      alignItems="center"
+      width="100%"
+      px={{ base: 2, sm: 4 }}  // Padding adjusted for responsiveness
+    >
+      <InputGroup size="lg" width="100%">
         <InputLeftElement pointerEvents="none">
-          <Icon as={SearchIcon} color="gray.300" />
+          <Icon as={Search2Icon} color="gray.500" w={5} h={5} />
         </InputLeftElement>
         <Input
           type="text"
-          placeholder="Search..."
+          placeholder="Search for 'desk'"
           value={searchTerm}
           onChange={handleChange}
           onKeyPress={handleKeyPress}
-          width="100%"  
-          maxWidth="600px"  
+          width="100%"
+          maxWidth="100%"
+          borderRadius="md"
+          borderColor="gray.300"
+          _hover={{ borderColor: 'gray.400' }}
+          _focus={{ borderColor: 'blue.500', boxShadow: 'sm' }}
+          size={{ base: "sm", md: "lg" }}  // Adjust size responsively
         />
       </InputGroup>
     </Flex>
@@ -48,3 +52,4 @@ const Search = () => {
 };
 
 export default Search;
+
