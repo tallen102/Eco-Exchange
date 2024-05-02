@@ -10,5 +10,15 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script defer src="/__/firebase/10.7.2/firebase-app-check-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDRouLF-oa6XP_g0WkObmhMFqT5v6LGOCM",
+        projectId: "howdy-2c724",
+        appId: "1:937007811989:web:15cfe1045ad4112c067a9c",
+      }
+      const appCheck = firebase.appCheck()
+      appCheck.activate('6LfCs80pAAAAAEBh646Z4wH4gQ9HEbXg2THoyAud', true)
+    </script>
   </body>
 </html>
